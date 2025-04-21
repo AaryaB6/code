@@ -1,0 +1,52 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.arima.model import ARIMA
+
+df = pd.read_csv("Month_Value_1.csv")
+print(df)
+
+df = df.dropna()
+print(df)
+
+ts_data = pd.Series(df['Revenue'].values, index=pd.date_range(start='2015-01-01', periods=len(df), freq='ME'))
+
+ts_data.plot(title="TSeries", xlabel="Month-Year", ylabel="Revenue")
+plt.show()
+
+decomposition = seasonal_decompose(ts_data, model='additive', period=12)
+decomposition.plot()
+plt.show()
+
+ad_test = adfuller(ts_data)
+print(f"ADF Statistic: {ad_test[0]}")
+print(f"p-value: {ad_test[1]}")
+
+if ad_test[1] <= 0.05 :
+    print("Time Series is stationary")
+else:
+    print("Time Series is not stationary")
+
+ts_data1 = ts_data.diff().dropna()
+
+ts_data1.plot(title="Differenced TSeries", xlabel="Month-Year", ylabel="Revenue")
+plt.show()
+
+decomposition1 = seasonal_decompose(ts_data1, model='additive', period=12)
+decomposition1.plot()
+plt.show()
+
+model = ARIMA(ts_data1, order=(2, 1, 1))
+model_fit = model.fit()
+
+forecast_data = model_fit.forecast(steps=20)
+
+plt.plot(ts_data1, label='Observed')
+plt.plot(forecast_data, label='Forecast', color='red')
+plt.title("ARIMA Forecast")
+plt.xlabel("Month-Year")
+plt.ylabel("Revenue")
+plt.legend()
+plt.show()
+
