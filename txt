@@ -1,0 +1,67 @@
+#stopword removal
+from nltk.corpus import stopwords
+import nltk
+
+nltk.download('stopwords')
+nltk.download('punkt')
+
+s_word = set(stopwords.words('english'))
+print(s_word)
+
+text = "Hello, I am in Ratnagiri, where are you ?"
+text = text.lower()
+words = text.split()
+for word in words:
+    if(word not in s_word):
+        print(word)
+
+#lemmatization
+import nltk
+from nltk.stem import WordNetLemmatizer
+nltk.download('wordnet')
+
+lem = WordNetLemmatizer()
+print(lem.lemmatize("are", pos='v'))
+print(lem.lemmatize("running", pos='v'))
+print(lem.lemmatize("playing", pos='v'))
+print(lem.lemmatize("effectively", pos='r'))
+print(lem.lemmatize("best", pos='a'))   
+
+#Stemmer
+from nltk.stem import PorterStemmer
+ps=PorterStemmer()
+text = "Running playing effectively happily is am best"
+words = text.split()
+for word in words:
+    print(ps.stem(word))
+
+#Remove punctuations
+import string
+text = "Hello, I am in Ratnagiri, where are you ?"
+print(text)
+text = text.translate(str.maketrans("", "", string.punctuation))
+print(text)
+
+#Bag of words
+from sklearn.feature_extraction.text import CountVectorizer
+text = [
+    "Hello world! This is a sample text.",
+    "Bag of words model is simple.",
+    "This is another example of text processing."
+]
+vectorize = CountVectorizer()
+x = vectorize.fit_transform(text)
+print(vectorize.get_feature_names_out(), x.toarray())
+
+#TFIDF
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+text = [
+    "Hello world! This is a sample text.",
+    "Bag of words model is simple.",
+    "This is another example of text processing."
+]
+vectorize = TfidfVectorizer()
+x = vectorize.fit_transform(text)
+print(vectorize.get_feature_names_out(), x.toarray())
+
